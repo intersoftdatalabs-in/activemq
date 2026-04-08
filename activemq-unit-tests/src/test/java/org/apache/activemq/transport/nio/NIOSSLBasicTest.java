@@ -25,7 +25,7 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.net.ssl.SSLHandshakeException;
-
+import javax.net.ssl.SSLServerSocketFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
@@ -96,7 +96,10 @@ public class NIOSSLBasicTest {
 
     @Test
     public void enabledCipherSuites() throws Exception {
-        BrokerService broker = createBroker("nio+ssl", getTransportType() + "://localhost:0?transport.needClientAuth=true&transport.verifyHostName=false&transport.enabledCipherSuites=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256");
+        SSLServerSocketFactory s = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
+        String[] defaultCipherSuites = s.getSupportedCipherSuites();
+        assertTrue(defaultCipherSuites.length > 0);
+        BrokerService broker = createBroker("nio+ssl", getTransportType() + "://localhost:0?transport.needClientAuth=true&transport.verifyHostName=false&transport.enabledCipherSuites=" + defaultCipherSuites[0]);
         basicSendReceive("ssl://localhost:" + broker.getConnectorByName("nio+ssl").getConnectUri().getPort() + "?socket.verifyHostName=false");
         stopBroker(broker);
     }
