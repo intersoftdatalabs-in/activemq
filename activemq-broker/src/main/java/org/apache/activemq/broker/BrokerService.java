@@ -274,6 +274,8 @@ public class BrokerService implements Service {
     private int storeOpenWireVersion = OpenWireFormat.DEFAULT_STORE_VERSION;
     private final List<Runnable> preShutdownHooks = new CopyOnWriteArrayList<>();
 
+    private int maxInflatedDataSize = OpenWireFormat.DEFAULT_MAX_INFLATED_DATA_SIZE;
+
     static {
 
         try {
@@ -3314,5 +3316,19 @@ public class BrokerService implements Service {
 
     public void setMaxSchedulerRepeatAllowed(int maxSchedulerRepeatAllowed) {
         this.maxSchedulerRepeatAllowed = maxSchedulerRepeatAllowed;
+    }
+
+    public int getMaxInflatedDataSize() {
+        return maxInflatedDataSize;
+    }
+
+    /**
+     * Set the maximum size that a compressed message can inflate to
+     * if a message has to be decompressed.
+     *
+     * @param maxInflatedDataSize
+     */
+    public void setMaxInflatedDataSize(int maxInflatedDataSize) {
+        this.maxInflatedDataSize = maxInflatedDataSize;
     }
 }

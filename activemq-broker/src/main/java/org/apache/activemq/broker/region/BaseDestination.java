@@ -926,4 +926,9 @@ public abstract class BaseDestination implements Destination {
     public SystemUsage getSystemUsage() {
         return systemUsage;
     }
+
+    @Override
+    public int getMaxInflatedDataSize() {
+        return brokerService.getMaxInflatedDataSize();
+    }
 }
