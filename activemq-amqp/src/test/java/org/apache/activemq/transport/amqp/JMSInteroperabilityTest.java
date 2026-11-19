@@ -528,7 +528,9 @@ public class JMSInteroperabilityTest extends JMSClientTestSupport {
         // set to 512 bytes
         brokerService.setMaxInflatedDataSize(512);
 
-        try (Connection openwire = createJMSConnection(); Connection amqp = createConnection()) {
+        Connection openwire = createJMSConnection();
+        Connection amqp = createConnection();
+        try {
             ((ActiveMQConnection) openwire).setUseCompression(true);
             openwire.start();
             amqp.start();
@@ -552,6 +554,12 @@ public class JMSInteroperabilityTest extends JMSClientTestSupport {
             // and message should go to the DLQ
             assertNull(amqpConsumer.receive(1000));
             assertTrue(sentToDlq.get());
+        } finally {
+            try {
+                amqp.close();
+            } finally {
+                openwire.close();
+            }
         }
     }
 
@@ -630,7 +638,9 @@ public class JMSInteroperabilityTest extends JMSClientTestSupport {
         // Raw Transformer doesn't expand the body
         assumeFalse(!transformer.equals("jms"));
 
-        try (Connection openwire = createJMSConnection(); Connection amqp = createConnection()) {
+        Connection openwire = createJMSConnection();
+        Connection amqp = createConnection();
+        try {
             openwire.start();
             amqp.start();
             Session openwireSession = openwire.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -664,6 +674,12 @@ public class JMSInteroperabilityTest extends JMSClientTestSupport {
             assertTrue(Wait.waitFor(() -> brokerService.getDestination(dest)
                     .getDestinationStatistics().getMessages().getCount() == 0, 500, 10));
             assertTrue(sentToDlq.get());
+        } finally {
+            try {
+                amqp.close();
+            } finally {
+                openwire.close();
+            }
         }
     }
 
