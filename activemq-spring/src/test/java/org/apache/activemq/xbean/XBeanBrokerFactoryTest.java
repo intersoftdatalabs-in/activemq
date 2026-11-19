@@ -26,7 +26,6 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.net.UnknownHostException;
-import java.nio.file.NoSuchFileException;
 import java.util.Set;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
@@ -150,7 +149,7 @@ public class XBeanBrokerFactoryTest {
         startBroker("xbean:spring/xbean-test.xml");
         startBroker("xbean:classpath:spring/xbean-test.xml");
         // jar, http, ftp are allowed so they just get bean errors as can't be found
-        startBrokerBeanError("xbean:jar:file:invalid.jar!/", NoSuchFileException.class);
+        startBrokerBeanError("xbean:jar:file:invalid.jar!/", FileNotFoundException.class);
         startBrokerBeanError("xbean:ftp://invalid", UnknownHostException.class);
         startBrokerBeanError("xbean:http://invalid", UnknownHostException.class);
         // check remote file too
@@ -163,7 +162,7 @@ public class XBeanBrokerFactoryTest {
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "jar,ftp,http");
 
         // jar is allowed, but file is invalid so we get a different error
-        startBrokerBeanError("xbean:jar:file:invalid.jar!/", NoSuchFileException.class);
+        startBrokerBeanError("xbean:jar:file:invalid.jar!/", FileNotFoundException.class);
 
         // ftp/http is allowed but url is invalid we get a different error
         // because the host is unknown
@@ -219,7 +218,8 @@ public class XBeanBrokerFactoryTest {
             fail("Should have failed with an exception");
         } catch (FatalBeanException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
-            assertTrue(expected.isAssignableFrom(cause.getClass()));
+            assertTrue("Expected " + expected + " but got " + cause.getClass() + ": " + cause.getMessage(),
+                    expected.isAssignableFrom(cause.getClass()));
         }
     }
 
