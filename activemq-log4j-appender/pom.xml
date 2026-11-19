@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-log4j-appender</artifactId>
@@ -32,7 +32,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-client</artifactId>
     </dependency>
     <dependency>
@@ -55,7 +55,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
       <scope>test</scope>
     </dependency>

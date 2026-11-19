@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-amqp</artifactId>
@@ -33,7 +33,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
     </dependency>
     <dependency>
@@ -59,7 +59,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-kahadb-store</artifactId>
       <scope>test</scope>
     </dependency>
@@ -87,23 +87,23 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-spring</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-http</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-mqtt</artifactId>
       <scope>test</scope>
     </dependency>
@@ -118,12 +118,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-leveldb-store</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq.tooling</groupId>
+      <groupId>com.intsof.lts.activemq.tooling</groupId>
       <artifactId>activemq-junit</artifactId>
       <scope>test</scope>
      </dependency>

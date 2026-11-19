@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-rar</artifactId>
@@ -332,11 +332,11 @@
       <artifactId>commons-pool2</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-amqp</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-mqtt</artifactId>
     </dependency>
     <dependency>
@@ -345,7 +345,7 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-all</artifactId>
       <scope>test</scope>
     </dependency>

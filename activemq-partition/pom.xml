@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-partition</artifactId>
@@ -34,7 +34,7 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -50,7 +50,7 @@
     </dependency>
     
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-leveldb-store</artifactId>
     </dependency>
     <dependency>
@@ -83,7 +83,7 @@
 
     <!-- Testing Dependencies -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
       <type>test-jar</type>
       <scope>test</scope>

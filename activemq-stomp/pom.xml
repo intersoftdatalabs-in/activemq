@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-stomp</artifactId>

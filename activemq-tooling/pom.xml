@@ -20,12 +20,12 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
-  <groupId>org.apache.activemq.tooling</groupId>
+  <groupId>com.intsof.lts.activemq.tooling</groupId>
   <artifactId>activemq-tooling</artifactId>
   <packaging>pom</packaging>
   <name>ActiveMQ :: Tooling</name>

@@ -19,9 +19,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq.tooling</groupId>
+    <groupId>com.intsof.lts.activemq.tooling</groupId>
     <artifactId>activemq-tooling</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-junit</artifactId>
@@ -31,7 +31,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -41,12 +41,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-spring</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-pool</artifactId>
       <scope>provided</scope>
     </dependency>

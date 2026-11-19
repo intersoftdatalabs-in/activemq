@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq.tooling</groupId>
+    <groupId>com.intsof.lts.activemq.tooling</groupId>
     <artifactId>activemq-tooling</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>activemq-memtest-maven-plugin</artifactId>
@@ -36,11 +36,11 @@
       <version>${maven-core-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-broker</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-console</artifactId>
     </dependency>
     <dependency>

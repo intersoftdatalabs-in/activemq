@@ -20,9 +20,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.apache.activemq</groupId>
+    <groupId>com.intsof.lts.activemq</groupId>
     <artifactId>activemq-parent</artifactId>
-    <version>5.16.8</version>
+    <version>5.16.8.1</version>
   </parent>
 
   <artifactId>apache-activemq</artifactId>
@@ -42,7 +42,7 @@
       <artifactId>activemq-camel</artifactId>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.activemq</groupId>
       <artifactId>activeio-core</artifactId>
     </dependency>
     <dependency>
@@ -50,7 +50,7 @@
       <artifactId>activemq-client</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
+      <groupId>com.intsof.lts.activemq</groupId>
       <artifactId>activemq-openwire-legacy</artifactId>
     </dependency>
     <dependency>
@@ -71,7 +71,7 @@
       <artifactId>activemq-partition</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq.tooling</groupId>
+      <groupId>com.intsof.lts.activemq.tooling</groupId>
       <artifactId>activemq-junit</artifactId>
     </dependency>
 
