@@ -67,34 +67,50 @@ public class QueueBrowseServlet extends HttpServlet {
     // -------------------------------------------------------------------------
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            try(WebClient client = WebClient.getWebClient(request);
-                Session session = client.getSession()) {
-                Queue queue = getQueue(request, session);
-                if (queue == null) {
-                    throw new ServletException("No queue URI specified");
-                }
-
-                String msgId = request.getParameter("msgId");
-                if (msgId == null) {
-                    MessageRenderer renderer = getMessageRenderer(request);
-                    configureRenderer(request, renderer);
-
-                    String selector = getSelector(request);
-                    try (QueueBrowser browser = session.createBrowser(queue, selector)) {
-                        renderer.renderMessages(request, response, browser);
+            try (WebClient client = WebClient.getWebClient(request)) {
+                Session session = client.getSession();
+                try {
+                    Queue queue = getQueue(request, session);
+                    if (queue == null) {
+                        throw new ServletException("No queue URI specified");
                     }
-                } else {
-                    XmlMessageRenderer renderer = new XmlMessageRenderer();
-                    try (QueueBrowser browser = session.createBrowser(queue, "JMSMessageID='" + msgId + "'")) {
-                        if (!browser.getEnumeration().hasMoreElements()) {
-                            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                            return;
-                        }
-                        Message message = (Message) browser.getEnumeration().nextElement();
 
-                        PrintWriter writer = response.getWriter();
-                        renderer.renderMessage(writer, request, response, browser, message);
-                        writer.flush();
+                    String msgId = request.getParameter("msgId");
+                    if (msgId == null) {
+                        MessageRenderer renderer = getMessageRenderer(request);
+                        configureRenderer(request, renderer);
+
+                        String selector = getSelector(request);
+                        QueueBrowser browser = session.createBrowser(queue, selector);
+                        try {
+                            renderer.renderMessages(request, response, browser);
+                        } finally {
+                            if (browser != null) {
+                                browser.close();
+                            }
+                        }
+                    } else {
+                        XmlMessageRenderer renderer = new XmlMessageRenderer();
+                        QueueBrowser browser = session.createBrowser(queue, "JMSMessageID='" + msgId + "'");
+                        try {
+                            if (!browser.getEnumeration().hasMoreElements()) {
+                                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                                return;
+                            }
+                            Message message = (Message) browser.getEnumeration().nextElement();
+
+                            PrintWriter writer = response.getWriter();
+                            renderer.renderMessage(writer, request, response, browser, message);
+                            writer.flush();
+                        } finally {
+                            if (browser != null) {
+                                browser.close();
+                            }
+                        }
+                    }
+                } finally {
+                    if (session != null) {
+                        session.close();
                     }
                 }
             }
