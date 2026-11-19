@@ -32,10 +32,10 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
     private static final ClassLoader FALLBACK_CLASS_LOADER =
         ClassLoadingAwareObjectInputStream.class.getClassLoader();
 
-    public static final Set<Class<?>> ALLOWED_JDK_TYPES = Set.of(
+    public static final Set<Class<?>> ALLOWED_JDK_TYPES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             Boolean.class, Short.class, Integer.class, Long.class,
             Float.class, Double.class, String.class, Character.class, Byte.class,
-            Throwable.class, Exception.class, StackTraceElement.class);
+            Throwable.class, Exception.class, StackTraceElement.class)));
 
     public static final String DEFAULT_SERIALIZABLE_PACKAGES = "org.apache.activemq,org.fusesource.hawtbuf,com.thoughtworks.xstream.mapper";
     public static final String[] serializablePackages;

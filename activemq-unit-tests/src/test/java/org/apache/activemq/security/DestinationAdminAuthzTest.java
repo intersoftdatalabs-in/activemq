@@ -22,9 +22,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.Broker;
@@ -132,10 +137,10 @@ public class DestinationAdminAuthzTest {
     public void testDestinationPermissions() throws Exception {
         boolean exceptionOccured = false;
 
-        var connectionFactory = new ActiveMQConnectionFactory(brokerService.getVmConnectorURI());
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerService.getVmConnectorURI());
         connectionFactory.setWatchTopicAdvisories(false);
 
-        final String destName = userName + ".in";;
+        final String destName = userName + ".in";
         ActiveMQDestination tmpActiveMQDestination = null;
         switch (destinationType) {
             case "temp-queue": tmpActiveMQDestination = new ActiveMQTempQueue(); break;
@@ -143,11 +148,14 @@ public class DestinationAdminAuthzTest {
             case "queue": tmpActiveMQDestination = new ActiveMQQueue(destName); break;
             case "topic": tmpActiveMQDestination = new ActiveMQTopic(destName); break;
             default: throw new IllegalArgumentException("Unsupported destinationType: " + destinationType);
-        };
-        var activemqDestination = tmpActiveMQDestination;
+        }
+        final ActiveMQDestination activemqDestination = tmpActiveMQDestination;
 
-        try (final var connection = connectionFactory.createConnection(userName, "password");
-             final var session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE)) {
+        Connection connection = null;
+        Session session = null;
+        try {
+            connection = connectionFactory.createConnection(userName, "password");
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
             connection.start();
 
             Destination tmpDestination = null;
@@ -157,20 +165,23 @@ public class DestinationAdminAuthzTest {
                 case "queue": tmpDestination = session.createQueue(destName); break;
                 case "topic": tmpDestination = session.createTopic(destName); break;
                 default: throw new IllegalArgumentException("Unsupported destinationType: " + destinationType);
-            };
-            final var destination = tmpDestination;
+            }
+            final Destination destination = tmpDestination;
 
-            if(activemqDestination.isTemporary()) {
+            if (activemqDestination.isTemporary()) {
                 switch (destinationType) {
                     case "temp-queue": activemqDestination.setPhysicalName(destination.toString().substring("temp-queue://".length())); break;
                     case "temp-topic": activemqDestination.setPhysicalName(destination.toString().substring("temp-topic://".length())); break;
                 }
             }
 
-            var brokerDestination = brokerService.getDestination(activemqDestination);
+            final org.apache.activemq.broker.region.Destination brokerDestination = brokerService.getDestination(activemqDestination);
 
-            try (var messageProducer = session.createProducer(destination);
-                 var messageConsumer = session.createConsumer(destination)) {
+            MessageProducer messageProducer = null;
+            MessageConsumer messageConsumer = null;
+            try {
+                messageProducer = session.createProducer(destination);
+                messageConsumer = session.createConsumer(destination);
 
                 messageProducer.send(session.createTextMessage("Test message"));
 
@@ -185,7 +196,7 @@ public class DestinationAdminAuthzTest {
                     }
                 }, 5_000L, 50L);
 
-                var message = messageConsumer.receive(2_000L);
+                Message message = messageConsumer.receive(2_000L);
 
                 Wait.waitFor(new Wait.Condition() {
                     @Override
@@ -197,7 +208,14 @@ public class DestinationAdminAuthzTest {
                 assertNotNull(message);
                 assertTrue(message.propertyExists("JMSXUserID"));
                 assertEquals(userName, message.getStringProperty("JMSXUserID"));
-                assertEquals("Test message", message.getBody(String.class));
+                assertEquals("Test message", ((TextMessage) message).getText());
+            } finally {
+                if (messageConsumer != null) {
+                    messageConsumer.close();
+                }
+                if (messageProducer != null) {
+                    messageProducer.close();
+                }
             }
 
             Wait.waitFor(new Wait.Condition() {
@@ -214,7 +232,8 @@ public class DestinationAdminAuthzTest {
             // Check removing a destination that already exists, but does not have authz
             boolean removeExceptionOccured = false;
             try {
-                for (var otherActiveMQDestination : Set.of(new ActiveMQQueue("other.in"), new ActiveMQTopic("other.in"))) {
+                for (ActiveMQDestination otherActiveMQDestination : Arrays.asList(
+                        new ActiveMQQueue("other.in"), new ActiveMQTopic("other.in"))) {
                     ((ActiveMQConnection) connection).destroyDestination(otherActiveMQDestination);
                 }
             } catch (JMSException e) {
@@ -225,7 +244,8 @@ public class DestinationAdminAuthzTest {
             // Check removing a destination that does not exist does not throw an error
             boolean notExistExceptionOccured = false;
             try {
-                for (var noexistActiveMQDestination : Set.of(new ActiveMQQueue("noexist.in"), new ActiveMQTopic("noexist.in"))) {
+                for (ActiveMQDestination noexistActiveMQDestination : Arrays.asList(
+                        new ActiveMQQueue("noexist.in"), new ActiveMQTopic("noexist.in"))) {
                     ((ActiveMQConnection) connection).destroyDestination(noexistActiveMQDestination);
                 }
             } catch (JMSException e) {
@@ -235,6 +255,13 @@ public class DestinationAdminAuthzTest {
 
         } catch (JMSException e) {
             exceptionOccured = true;
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
         }
 
         assertEquals(errorExpected, exceptionOccured);
@@ -273,8 +300,8 @@ public class DestinationAdminAuthzTest {
         writeAccess.put(new ActiveMQTopic("ActiveMQ.Advisory.>"), WILDCARD);
         adminAccess.put(new ActiveMQTopic("ActiveMQ.Advisory.>"), WILDCARD);
 
-        var authorizationMap = new SimpleAuthorizationMap(writeAccess, readAccess, adminAccess);
-        var tempDestinationAuthorizationEntry = new TempDestinationAuthorizationEntry();
+        SimpleAuthorizationMap authorizationMap = new SimpleAuthorizationMap(writeAccess, readAccess, adminAccess);
+        TempDestinationAuthorizationEntry tempDestinationAuthorizationEntry = new TempDestinationAuthorizationEntry();
 
         try {
             tempDestinationAuthorizationEntry.setAdmin("admins, app1Group, app2Group");
@@ -308,7 +335,7 @@ public class DestinationAdminAuthzTest {
     }
 
     protected BrokerService createBroker() throws Exception {
-        var brokerService = new BrokerService();
+        BrokerService brokerService = new BrokerService();
         brokerService.setDeleteAllMessagesOnStartup(true);
         brokerService.setDestinations(new ActiveMQDestination[] { new ActiveMQQueue("other.in"), new ActiveMQTopic("other.in") });
         brokerService.setPersistent(false);
@@ -321,7 +348,7 @@ public class DestinationAdminAuthzTest {
     }
 
     private static Map<String, String> createUserPasswords() {
-        var users = new HashMap<String, String>();
+        Map<String, String> users = new HashMap<String, String>();
         users.put("admin", "password");
         users.put(APP1_USER_NAME, "password");
         users.put(APP2_USER_NAME, "password");
@@ -330,7 +357,7 @@ public class DestinationAdminAuthzTest {
     }
 
     private static Map<String, Set<Principal>> createUserGroups() {
-        var groups = new HashMap<String, Set<Principal>>();
+        Map<String, Set<Principal>> groups = new HashMap<String, Set<Principal>>();
         groups.put("admin", new HashSet<Principal>(Arrays.asList(new Principal[] {new GroupPrincipal("admins")})));
         groups.put(APP1_USER_NAME, new HashSet<Principal>(Arrays.asList(new Principal[] { new GroupPrincipal(APP1_GROUP_NAME) })));
         groups.put(APP2_USER_NAME, new HashSet<Principal>(Arrays.asList(new Principal[] { new GroupPrincipal(APP2_GROUP_NAME) })));

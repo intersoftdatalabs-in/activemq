@@ -208,7 +208,7 @@ public class ClassLoadingAwareObjectInputStreamTest {
 
     @Test
     public void testReadObjectJdkTypesNotFiltered() throws Exception {
-        for (String filter : Set.of(ACCEPTS_ALL_FILTER, ACCEPTS_NONE_FILTER,
+        for (String filter : Arrays.asList(ACCEPTS_ALL_FILTER, ACCEPTS_NONE_FILTER,
                 ClassLoadingAwareObjectInputStream.DEFAULT_SERIALIZABLE_PACKAGES)) {
             doTestReadObject(Boolean.TRUE, filter);
             doTestReadObject("test", filter);
