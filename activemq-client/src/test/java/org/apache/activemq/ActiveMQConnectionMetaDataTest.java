@@ -19,6 +19,7 @@ package org.apache.activemq;
 import static org.apache.activemq.ActiveMQConnectionMetaData.PLATFORM_DETAILS_MAX_LENGTH;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
 import org.junit.Test;
 
 public class ActiveMQConnectionMetaDataTest {
@@ -34,13 +35,19 @@ public class ActiveMQConnectionMetaDataTest {
     public void testPlatformDetailsTruncation() {
         String javaVendor = System.getProperty("java.vendor");
         try {
-            System.setProperty("java.vendor", "a".repeat(PLATFORM_DETAILS_MAX_LENGTH + 1));
+            char[] chars = new char[PLATFORM_DETAILS_MAX_LENGTH + 1];
+            Arrays.fill(chars, 'a');
+            System.setProperty("java.vendor", new String(chars));
             // ensure we truncate if too large
             assertEquals(PLATFORM_DETAILS_MAX_LENGTH,
                     ActiveMQConnectionMetaData.getPlatformDetails().length());
         } finally {
             // restore original
-            System.setProperty("java.vendor", javaVendor);
+            if (javaVendor != null) {
+                System.setProperty("java.vendor", javaVendor);
+            } else {
+                System.clearProperty("java.vendor");
+            }
         }
     }
 }

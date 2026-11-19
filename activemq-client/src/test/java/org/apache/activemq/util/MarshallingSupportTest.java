@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,8 +64,10 @@ public class MarshallingSupportTest {
         Map<String, Object> testMap = new HashMap<>();
         testMap.put("key1", "value1");
         // nested map with nested collection, should require depth of 2 being allowed
-        testMap.put("key2", Map.of("string","string", "nested",
-                List.of("one")));
+        Map<String, Object> nestedMap = new HashMap<>();
+        nestedMap.put("string", "string");
+        nestedMap.put("nested", Collections.singletonList("one"));
+        testMap.put("key2", nestedMap);
 
         MarshallingSupport.marshalPrimitiveMap(testMap, dataOut);
         DataInputStream dataIn = new DataInputStream(new ByteArrayInputStream(bytesOut.toByteArray()));
@@ -96,8 +99,11 @@ public class MarshallingSupportTest {
         List<Object> testList = new ArrayList<>();
         testList.add("value");
         // nested list with nested collection, should require depth of 2 being allowed
-        testList.add(List.of(List.of("one")));
-        testList.add(Map.of("one","two","three","four"));
+        testList.add(Collections.singletonList(Collections.singletonList("one")));
+        Map<String, String> nestedMap = new HashMap<>();
+        nestedMap.put("one", "two");
+        nestedMap.put("three", "four");
+        testList.add(nestedMap);
 
         MarshallingSupport.marshalPrimitiveList(testList, dataOut);
         DataInputStream dataIn = new DataInputStream(new ByteArrayInputStream(bytesOut.toByteArray()));
