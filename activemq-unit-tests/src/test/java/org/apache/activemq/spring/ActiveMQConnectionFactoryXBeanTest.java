@@ -27,7 +27,6 @@ import javax.jms.Connection;
 import javax.jms.JMSException;
 import java.io.FileNotFoundException;
 import java.net.UnknownHostException;
-import java.nio.file.NoSuchFileException;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.transport.vm.VMTransportFactory;
 import org.apache.activemq.xbean.XBeanBrokerFactory;
@@ -167,7 +166,7 @@ public class ActiveMQConnectionFactoryXBeanTest {
                 UnknownHostException.class);
 
         // jar is now allowed but file doesn't exist
-        assertBrokerStartError("vm://localhost?brokerConfig=xbean:jar:file:invalid.jar!/", NoSuchFileException.class);
+        assertBrokerStartError("vm://localhost?brokerConfig=xbean:jar:file:invalid.jar!/", FileNotFoundException.class);
 
         System.setProperty(XBeanBrokerFactory.XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "remote-file,jar,ftp");
         // remote file is now allowed, but can't be found with bad host
