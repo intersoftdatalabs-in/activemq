@@ -38,6 +38,12 @@ import org.springframework.beans.FatalBeanException;
 
 public class XBeanBrokerFactoryTest {
 
+    @SafeVarargs
+    private static <T> Set<T> setOf(T... items) {
+        return java.util.Collections.unmodifiableSet(new java.util.HashSet<>(java.util.Arrays.asList(items)));
+    }
+
+
     @Before
     public void setUp() throws Exception {
         // reset before each test
@@ -53,15 +59,15 @@ public class XBeanBrokerFactoryTest {
     public void testXBeanAllowedProtocolParsing() throws Exception {
         // new instance will read the current property protocol prop and build set
         XBeanBrokerFactory factory = new XBeanBrokerFactory();
-        assertEquals(Set.of(Utils.FILE_PROTOCOL, Utils.CLASSPATH_PROTOCOL), factory.getAllowedProtocols());
+        assertEquals(setOf(Utils.FILE_PROTOCOL, Utils.CLASSPATH_PROTOCOL), factory.getAllowedProtocols());
 
         // set property
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "file,jar");
         factory = new XBeanBrokerFactory();
-        assertEquals(Set.of("jar","file"), factory.getAllowedProtocols());
+        assertEquals(setOf("jar","file"), factory.getAllowedProtocols());
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "http");
         factory = new XBeanBrokerFactory();
-        assertEquals(Set.of("http"), factory.getAllowedProtocols());
+        assertEquals(setOf("http"), factory.getAllowedProtocols());
 
         // check allow all
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "*");
@@ -76,7 +82,7 @@ public class XBeanBrokerFactoryTest {
         // test empty and white space only
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "jar  , ftp,   http");
         factory = new XBeanBrokerFactory();
-        assertEquals(Set.of("jar","ftp", "http"), factory.getAllowedProtocols());
+        assertEquals(setOf("jar","ftp", "http"), factory.getAllowedProtocols());
         System.setProperty(XBEAN_BROKER_FACTORY_PROTOCOLS_PROP, "   ");
         factory = new XBeanBrokerFactory();
         assertTrue(factory.getAllowedProtocols().isEmpty());

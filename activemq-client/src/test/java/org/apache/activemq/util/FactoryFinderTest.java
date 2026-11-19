@@ -36,6 +36,11 @@ import org.junit.Test;
 
 public class FactoryFinderTest {
 
+    private static <T> Set<T> setOf(T... items) {
+        return java.util.Collections.unmodifiableSet(new java.util.HashSet<>(java.util.Arrays.asList(items)));
+    }
+
+
     private static final String TRANSPORT_FACTORY_PATH = "META-INF/services/org/apache/activemq/transport/";
     private static final String WIREFORMAT_FACTORY_PATH = "META-INF/services/org/apache/activemq/wireformat/";
 
@@ -150,7 +155,7 @@ public class FactoryFinderTest {
     // Test filtering by allowed implementations of the given interface
     @Test
     public void testAllowedImplsFilter() throws Exception {
-        Set<Class<?>> allowedImpls = Set.of(TcpTransportFactory.class, NIOTransportFactory.class);
+        Set<Class<?>> allowedImpls = setOf(TcpTransportFactory.class, NIOTransportFactory.class);
         FactoryFinder<TransportFactory> finder = new FactoryFinder<>(TRANSPORT_FACTORY_PATH, TransportFactory.class,
                 FactoryFinder.buildAllowedImpls(allowedImpls.toArray(new Class<?>[0])));
         assertEquals(TransportFactory.class, finder.getRequiredType());
@@ -173,7 +178,7 @@ public class FactoryFinderTest {
         FactoryFinder<TransportFactory> finder = new FactoryFinder<>(TRANSPORT_FACTORY_PATH,
                 TransportFactory.class, "");
         assertEquals(TransportFactory.class, finder.getRequiredType());
-        assertEquals(Set.of(), finder.getAllowedImpls());
+        assertEquals(setOf(), finder.getAllowedImpls());
 
         try {
             // nothing allowed, tcp exists but should be blocked
@@ -226,7 +231,7 @@ public class FactoryFinderTest {
 
         // all white space should have been trimmed and all empty values skipped
         // leading to the 3 valid classes loaded
-        assertEquals(Set.of(TcpTransportFactory.class, SslTransportFactory.class,
+        assertEquals(setOf(TcpTransportFactory.class, SslTransportFactory.class,
                 NIOTransportFactory.class), finder.getAllowedImpls());
         assertNotNull(finder.newInstance("tcp"));
         assertNotNull(finder.newInstance("ssl"));

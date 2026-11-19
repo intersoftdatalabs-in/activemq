@@ -116,18 +116,33 @@ public class VMTransportFactoryTest {
 
     private void assertBrokerCreated(String url) throws JMSException {
         final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(url);
-        try (Connection connection = factory.createConnection()) {
+        Connection connection = null;
+        try {
+            connection = factory.createConnection();
             assertNotNull(connection);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
         }
     }
 
     private void assertBrokerStartError(String url) {
         final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(url);
-        try (Connection ignored = factory.createConnection()) {
+        Connection connection = null;
+        try {
+            connection = factory.createConnection();
             fail("Should have failed with an exception");
         } catch (JMSException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
             assertTrue(cause instanceof IllegalArgumentException);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (JMSException ignored) {
+                }
+            }
         }
     }
 

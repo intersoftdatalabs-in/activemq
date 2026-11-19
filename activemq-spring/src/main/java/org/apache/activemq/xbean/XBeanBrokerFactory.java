@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.activemq.broker.BrokerFactoryHandler;
@@ -61,10 +62,12 @@ public class XBeanBrokerFactory implements BrokerFactoryHandler {
 
         // Asterisk will map to null which will allow all and skip checking
         // Empty string will map to an empty set and will deny all
-        this.allowedProtocols = !allowedProtocols.equals("*") ?
-                Arrays.stream(allowedProtocols.split("\\s*,\\s*"))
-                .filter(s -> !s.isBlank())
-                .collect(Collectors.toUnmodifiableSet()) : null;
+        this.allowedProtocols = !allowedProtocols.equals("*")
+                ? Collections.unmodifiableSet(
+                    Arrays.stream(allowedProtocols.split("\\s*,\\s*"))
+                        .filter(s -> !s.trim().isEmpty())
+                        .collect(Collectors.toSet()))
+                : null;
     }
 
     private boolean validate = true;

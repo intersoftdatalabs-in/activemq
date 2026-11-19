@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -65,10 +66,12 @@ public class VMTransportFactory extends TransportFactory {
 
         // Asterisk will map to null which will allow all and skip checking
         // Empty string will map to an empty set and will deny all
-        this.allowedSchemes = !allowedSchemes.equals("*") ?
-                Arrays.stream(allowedSchemes.split("\\s*,\\s*"))
-                .filter(s -> !s.isBlank())
-                .collect(Collectors.toUnmodifiableSet()) : null;
+        this.allowedSchemes = !allowedSchemes.equals("*")
+                ? Collections.unmodifiableSet(
+                    Arrays.stream(allowedSchemes.split("\\s*,\\s*"))
+                        .filter(s -> !s.trim().isEmpty())
+                        .collect(Collectors.toSet()))
+                : null;
     }
 
     @Override
