@@ -26,6 +26,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.apache.activemq.broker.BrokerPlugin;
@@ -123,7 +124,7 @@ public class DurableSyncNetworkBridgeAuthTest extends AbstractDurableSyncNetwork
         // Simulate a connection exception and reconnect, we should receive again
         brokerSubInfo.set(null);
         localBroker.getNetworkConnectors().get(0).activeBridges().stream()
-                .findFirst().orElseThrow().serviceRemoteException(new Exception());
+                .findFirst().orElseThrow(NoSuchElementException::new).serviceRemoteException(new Exception());
         // wait for failure
         assertTrue(Wait.waitFor(() -> serviceFailed.get() != null,5000,10));
         assertTrue(Wait.waitFor(bridge.localBroker::isDisposed,5000,10));
@@ -349,7 +350,7 @@ public class DurableSyncNetworkBridgeAuthTest extends AbstractDurableSyncNetwork
 
     private DemandForwardingBridge getActiveBridge() {
         return(DemandForwardingBridge) localBroker.getNetworkConnectors().get(0).activeBridges().stream()
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow(NoSuchElementException::new);
     }
 
     private class DiscoveryAgentFilter implements DiscoveryAgent {
